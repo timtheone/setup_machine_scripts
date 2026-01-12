@@ -97,7 +97,8 @@ for f in \
   "$SCRIPT_DIR/install/10-zsh-ohmyzsh.sh" \
   "$SCRIPT_DIR/install/20-node-nvm-pnpm.sh" \
   "$SCRIPT_DIR/install/30-docker.sh" \
-  "$SCRIPT_DIR/install/40-bun.sh"
+  "$SCRIPT_DIR/install/40-bun.sh" \
+  "$SCRIPT_DIR/install/50-github-cli.sh"
 do
   run_module "$f"
 done
