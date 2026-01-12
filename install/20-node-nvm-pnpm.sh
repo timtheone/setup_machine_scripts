@@ -39,6 +39,29 @@ else
   fi
 fi
 
+# Ensure nvm lines are in .zshrc (nvm installer sometimes misses this)
+ZSHRC="$USER_HOME/.zshrc"
+if [[ -f "$ZSHRC" ]] && [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  if ! grep -q 'NVM_DIR' "$ZSHRC"; then
+    if [[ "$DRYRUN" == "1" ]]; then
+      echo -e "\033[1;36m[DRY-RUN]\033[0m Would add nvm initialization to .zshrc"
+      summary_add "$MODULE" "nvm .zshrc" "DRYRUN" "would add"
+    else
+      log "Adding nvm initialization to .zshrc"
+      cat >> "$ZSHRC" << 'EOF'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+EOF
+      summary_add "$MODULE" "nvm .zshrc" "INSTALLED" "added to .zshrc"
+    fi
+  else
+    skip "nvm already configured in .zshrc"
+    summary_add "$MODULE" "nvm .zshrc" "SKIPPED" "already in .zshrc"
+  fi
+fi
+
 # Load nvm for this run (skip in dry-run if nvm not installed)
 # shellcheck disable=SC1091
 if [[ -s "$NVM_DIR/nvm.sh" ]]; then
