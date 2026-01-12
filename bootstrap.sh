@@ -75,9 +75,15 @@ run_module() {
 
   # run as target user (so dotfiles land in correct $HOME)
   set +e
-  $SUDO -u "$USER_NAME" env \
-    USER_NAME="$USER_NAME" USER_HOME="$USER_HOME" SUDO="$SUDO" SUMMARY_FILE="$SUMMARY_FILE" DRYRUN="$DRYRUN" \
-    bash "$module_path"
+  if [[ -n "$SUDO" ]]; then
+    $SUDO -u "$USER_NAME" env \
+      USER_NAME="$USER_NAME" USER_HOME="$USER_HOME" SUDO="$SUDO" SUMMARY_FILE="$SUMMARY_FILE" DRYRUN="$DRYRUN" \
+      bash "$module_path"
+  else
+    # Already running as root, run directly
+    env USER_NAME="$USER_NAME" USER_HOME="$USER_HOME" SUDO="sudo" SUMMARY_FILE="$SUMMARY_FILE" DRYRUN="$DRYRUN" \
+      bash "$module_path"
+  fi
   local rc=$?
   set -e
 
